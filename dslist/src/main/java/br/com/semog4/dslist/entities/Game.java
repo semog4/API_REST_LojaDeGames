@@ -24,8 +24,17 @@ public class Game {
 	private String platforms;
 	private Double score;
 	private String imgUrl;
+	
+	/*
+	 * Quando um atributo String é criado no banco o mesmo tem o tipo Varchar(255), sendo
+	 * que o nosso valor para esse campo na tabela ultrapassa 255, logo temos que informar
+	 * que o tipo do campo a ser utilizado deverá ser Text para comportar um valor maior
+	 * que 255 caracteres.
+	 * 
+	 */
 	@Column (columnDefinition = "Text")
-	private String shortDescription;
+	private String shortDescription;    
+	
 	@Column (columnDefinition = "Text")
 	private String longDescription;
 	
