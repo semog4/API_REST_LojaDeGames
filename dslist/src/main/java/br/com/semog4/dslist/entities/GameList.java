@@ -8,6 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+//Entidade que representa a lista de categoria de jogos
+
 @Entity
 @Table( name = "tb_game_list")
 public class GameList {
