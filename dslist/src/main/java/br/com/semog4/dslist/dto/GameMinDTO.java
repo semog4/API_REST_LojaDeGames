@@ -1,6 +1,7 @@
 package br.com.semog4.dslist.dto;
 
 import br.com.semog4.dslist.entities.Game;
+import br.com.semog4.dslist.projections.GameMinProjection;
 
 public class GameMinDTO {
 
@@ -22,6 +23,16 @@ public class GameMinDTO {
 		shortDescription = entityGame.getShortDescription();
 	}
 
+	public GameMinDTO(GameMinProjection projection) {
+		id = projection.getId();
+		title = projection.getTitle();
+		year = projection.getYear();
+		imgUrl = projection.getImgUrl();
+		shortDescription = projection.getShortDescription();
+		
+	}
+	
+	
 	public Long getId() {
 		return id;
 	}

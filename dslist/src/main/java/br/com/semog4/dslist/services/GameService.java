@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.semog4.dslist.dto.GameDTO;
 import br.com.semog4.dslist.dto.GameMinDTO;
 import br.com.semog4.dslist.entities.Game;
+import br.com.semog4.dslist.projections.GameMinProjection;
 import br.com.semog4.dslist.repositories.GameRepository;
 
 @Service
@@ -23,7 +24,7 @@ public class GameService {
 	
 	@Autowired
 	private GameRepository gameRepository;
-	
+
 
 	//busca todos os game min	
 	//anotação garante que vai ocorrer a transação com o banco e que é somente de leitura
@@ -37,15 +38,19 @@ public class GameService {
 	}
 	
 	//busca um game por id
-	//anotação garante que vai ocorrer a transação com o banco e que é somente de leitura
-	//isso torna o acesso mais rápido. Garantir que a transação não vai bloquear o banco
-	//para realização da operação porque não é de escrita somente de leitura.
 	@Transactional(readOnly = true)	
 	public GameDTO findById(Long id) {
 		Game game = gameRepository.findById(id).get();
 		GameDTO dto = new GameDTO(game);
 		return dto;
 	}
-	
+		
+	//Retorna a lista de games de uma categoria
+	@Transactional(readOnly = true)	
+	public List<GameMinDTO> findByList(Long listId){
+		List<GameMinProjection> listaDeGamesPorCategoria  = gameRepository.searchByList(listId);
+		List<GameMinDTO> dto = listaDeGamesPorCategoria.stream().map(game -> new GameMinDTO(game)).toList(); 
+		return dto;
+	}
 	
 }
