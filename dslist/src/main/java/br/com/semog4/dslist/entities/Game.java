@@ -29,7 +29,7 @@ public class Game {
 	 * Quando um atributo String é criado no banco o mesmo tem o tipo Varchar(255), sendo
 	 * que o nosso valor para esse campo na tabela ultrapassa 255, logo temos que informar
 	 * que o tipo do campo a ser utilizado deverá ser Text para comportar um valor maior
-	 * que 255 caracteres.
+	 * que 255 caracteres no campo da tabela.
 	 * 
 	 */
 	@Column (columnDefinition = "Text")
