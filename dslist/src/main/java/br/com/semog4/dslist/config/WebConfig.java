@@ -1,4 +1,4 @@
-package dslist.src.main.java.config;
+package br.com.semog4.dslist.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
