@@ -8,6 +8,7 @@
 /.sonarlint
 /.recommenders
 /.vscode
+*.data
 
 HELP.md
 target/

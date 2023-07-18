@@ -1,0 +1,52 @@
+version: "3.7"
+services:
+  # ====================================================================================================================
+  # CONTAINER - POSTGRES SERVER
+  # ====================================================================================================================
+  pg-docker:
+    image: postgres:14-alpine
+    container_name: dev-postgresql
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_PASSWORD: 1234567
+    ports:
+      - 5433:5432
+    #======
+    #INDICA ONDE DEVE SER ARMAZENADO AS INFORMAÇÕES APÓS FECHAR O CONTAINER, ASSIM NÃO PERDE AS INFORMAÇÕES AO FECHAR O CONTAINER 
+    volumes:
+      - ./.data/postgresql/data:/var/lib/postgresql/data
+    #======
+    #CONFIGURAÇÃO DA REDE A SER CRIADA PARA O CONTAINER SE COMUNICAR    
+    networks:
+      - dev-network
+  # ====================================================================================================================
+  # CONTAINER - PGADMIN
+  # ====================================================================================================================
+  pgadmin-docker:
+    image: dpage/pgadmin4
+    container_name: dev-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: me@example.com
+      PGADMIN_DEFAULT_PASSWORD: 1234567
+    #======
+    #PORTA WEB A SER UTILIZADA NO BROWSER PARA ACESSAR O PGADMIN     
+    ports:
+      - 5050:80
+    #======
+    #INDICA ONDE DEVE SER ARMAZENADO AS INFORMAÇÕES APÓS FECHAR O CONTAINER, ASSIM NÃO PERDE AS INFORMAÇÕES AO FECHAR O CONTAINER 
+    volumes:
+      - ./.data/pgadmin:/var/lib/pgadmin
+    #======
+    #INDICA QUE PARA LEVANTAR ESSE CONTAINER, O CONTAINER DEPENDE DE LEVANTAR O CONTAINER POSTGRES  
+    depends_on:
+      - pg-docker
+    #======
+    #CONFIGURAÇÃO DA REDE A SER CRIADA PARA O CONTAINER SE COMUNICAR    
+    networks:
+      - dev-network
+# ======================================================================================================================
+# CONFIGURAÇÃO DA REDE
+# ======================================================================================================================
+networks:
+  dev-network:
+    driver: bridge
