@@ -53,9 +53,11 @@ Em virtude do escopo do projeto e o tempo demandado para o projeto sugerido, o f
 ### application.properties
 
 ```
+#APP_PROFILE - indica qual ambiente será utilizado (test,hom ou prod )
 spring.profiles.active=${APP_PROFILE:hom}
 spring.jpa.open-in-view=false
-
+#O parâmetro cors.origins tem a função de indicar quais urls podem acessar a aplicação.
+#Tem que criar a classe WebConfig em conjunto.
 cors.origins=${CORS_ORIGINS:http://localhost:5173,http://localhost:3000}
 ```
 
@@ -79,6 +81,10 @@ spring.jpa.properties.hibernate.format_sql=true
 ### application-hom.properties
 
 ```
+#Ao descomentar as linhas abaixo, faz com que no momento do start da aplicação seja criado o arquivo
+#create.sql, onde será gerado todo o script do banco inclusive os seeds correspondentes.
+#Este processo auxilia quando precisamos gerar toda a estrutura do banco que foi criada por exemplo
+#no ambiente de test, e precisamos migrar para outro ambiente: hom e/ou prod.
 #spring.jpa.properties.jakarta.persistence.schema-generation.create-source=metadata
 #spring.jpa.properties.jakarta.persistence.schema-generation.scripts.action=create
 #spring.jpa.properties.jakarta.persistence.schema-generation.scripts.create-target=create.sql
@@ -95,6 +101,8 @@ spring.jpa.hibernate.ddl-auto=none
 
 ### application-prod.properties
 ```
+#Os valores correspondentes as variáveis: DB_URL, DB_USERNAME e DB_PASSWORD serão informados
+#no banco de produção (cloud).
 spring.datasource.url=${DB_URL}
 spring.datasource.username=${DB_USERNAME}
 spring.datasource.password=${DB_PASSWORD}
@@ -106,6 +114,7 @@ spring.jpa.hibernate.ddl-auto=none
 
 ### system.properties
 ```
+#A criação deste arquivo é exigido em algumas plataformas cloud
 java.runtime.version=17
 ```
 
@@ -132,7 +141,8 @@ public class WebConfig {
 ```
 
 ### GameRepository
-
+- A execução de uma query nativa referente a uma consulta deverá ser sempre mapeada por uma classe do tipo Projection, onde os valores
+retornados na consulta, deverão estar mapeados nesta classe.No cenário em questão foi criada a classe: GameMinProjection
 ```java
 @Query(nativeQuery = true, value = """
 		SELECT tb_game.id, tb_game.title, tb_game.game_year AS `year`, tb_game.img_url AS imgUrl,
@@ -183,9 +193,51 @@ INSERT INTO tb_belonging (list_id, game_id, position) VALUES (2, 9, 3);
 INSERT INTO tb_belonging (list_id, game_id, position) VALUES (2, 10, 4);
 ```
 
-### Script Docker Compose
+### Script Docker Compose: 
+Configuração do arquivo docker-compose.yml para levantar os containers: Postgresql e PgAdmin
 
-https://gist.github.com/acenelio/5e40b27cfc40151e36beec1e27c4ff71
+```
+version: "3.7"
+services:
+  # ====================================================================================================================
+  # POSTGRES SERVER
+  # ====================================================================================================================
+  pg-docker:
+    image: postgres:14-alpine
+    container_name: dev-postgresql
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_PASSWORD: 1234567
+    ports:
+      - 5433:5432
+    volumes:
+      - ./.data/postgresql/data:/var/lib/postgresql/data
+    networks:
+      - dev-network
+  # ====================================================================================================================
+  # PGADMIN
+  # ====================================================================================================================
+  pgadmin-docker:
+    image: dpage/pgadmin4
+    container_name: dev-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: me@example.com
+      PGADMIN_DEFAULT_PASSWORD: 1234567
+    ports:
+      - 5050:80
+    volumes:
+      - ./.data/pgadmin:/var/lib/pgadmin
+    depends_on:
+      - pg-docker
+    networks:
+      - dev-network
+# ======================================================================================================================
+# REDE
+# ======================================================================================================================
+networks:
+  dev-network:
+    driver: bridge
+```
 
 # Autor
 
